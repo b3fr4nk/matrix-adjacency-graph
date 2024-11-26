@@ -65,41 +65,43 @@ class MatrixGraph:
 
         self.vertices -= 1
 
-# get the smallest distance for dijkstra's algorithm
-    def smallestDistanceIndex(self, dist):
-        smallest_index = 0
-        for i in range(len(dist)):
-            if dist[i] is not None:
-                if dist[i] < dist[smallest_index]:
-                    smallest_index = dist[i]
-        return smallest_index
+# # get the smallest distance for dijkstra's algorithm
+#     def smallestDistanceIndex(self, dist):
+#         smallest_index = 0
+#         for i in range(len(dist)):
+#             if dist[i] is not None:
+#                 if dist[i] < dist[smallest_index]:
+#                     smallest_index = dist[i]
+#         return smallest_index
 
 # using dijkstra's algorithm to find the shortest possible distance from start to end
     def shortestPath(self, start, end):
-        dist = []
-        to_visit = []
-
-        # initialize the distances between each vertex and the available vertices
-        for i in range(self.vertices):
-            dist.append(None)
-            to_visit.append(i)
-        dist[0] = 0
+        dist = [float('inf')] * self.vertices
+        dist[start] = 0
+        to_visit = set(range(self.vertices))
 
         # actually find the shortest path
-        while len(to_visit) > 0:
-            # grab the next vertex in the queue
-            v = to_visit.pop(self.smallestDistanceIndex(dist))
+        while to_visit:
+            # find the smallest distance among those not yet visited
+            current = min(to_visit, key=lambda vertex: dist[vertex])
+
+            # if smallest distance is infinite path does not exist
+            if dist[current] == float('inf'):
+                break
+
+            # Remove the vertex from the to-visit set
+            to_visit.remove(current)
 
             # compute the distance for each possible next step
-            for n in to_visit:
-                if self.graph[v][n] > 0: # check to make sure there is an edge between these two vertices
-                    alt = dist[v] + self.graph[v][n]
-                    if dist[n] is None:
-                        dist[n] = alt
-                    elif alt < dist[n]:
-                        dist[n] = alt
+            for neighbor in to_visit:
+                if self.graph[current][neighbor] > 0:  # Check if an edge exists
+                    alt = dist[current] + self.graph[current][neighbor]
+                    if alt < dist[neighbor]:
+                        dist[neighbor] = alt
 
-        return dist[end] - dist[start]
+        # Return the shortest distance to the end vertex
+        print(dist)
+        return dist[end] if dist[end] != float('inf') else None
             
 
                 
@@ -125,7 +127,7 @@ obj.addEdge(4, 3)
 obj.displayAdjacencyMatrix()
 
 # print the shortest path between these two points
-print(obj.shortestPath(0, 4))
+print(obj.shortestPath(4, 0))
 
 # removing an existing vertex in the graph
 # obj.removeVertex(1)
