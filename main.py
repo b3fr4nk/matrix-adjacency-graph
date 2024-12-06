@@ -77,6 +77,7 @@ class MatrixGraph:
 # using dijkstra's algorithm to find the shortest possible distance from start to end
     def shortestPath(self, start, end):
         dist = [float('inf')] * self.vertices
+        steps = [None] * self.vertices
         dist[start] = 0
         to_visit = set(range(self.vertices))
 
@@ -96,10 +97,16 @@ class MatrixGraph:
             for neighbor in to_visit:
                 if self.graph[current][neighbor] > 0:  # Check if an edge exists
                     alt = dist[current] + self.graph[current][neighbor]
+                    if steps[current] == None:
+                        current_steps = [start, neighbor]
+                    else:
+                        current_steps = steps[current] + [neighbor]
                     if alt < dist[neighbor]:
                         dist[neighbor] = alt
+                        steps[neighbor] = current_steps
 
         # Return the shortest distance to the end vertex
+        print(steps)
         print(dist)
         return dist[end] if dist[end] != float('inf') else None
             
@@ -107,7 +114,7 @@ class MatrixGraph:
                 
     
 # creating objects of class Graph
-obj = MatrixGraph(4)
+obj = MatrixGraph(6)
 
 # calling methods
 obj.addEdge(0, 1, 2)
@@ -115,14 +122,16 @@ obj.addEdge(0, 2, 3)
 obj.addEdge(1, 2, 4)
 obj.addEdge(2, 3, 2)
 obj.addEdge(3, 1, 5)
+obj.addEdge(5, 3, 5)
+obj.addEdge(5, 0, 7)
+obj.addEdge(0, 3, 9)
 # the adjacency matrix created
 obj.displayAdjacencyMatrix()
 
 # adding a vertex to the graph
 obj.addVertex()
 # connecting that vertex to other existing vertices
-obj.addEdge(4, 1)
-obj.addEdge(4, 3)
+
 # the adjacency matrix with a new vertex
 obj.displayAdjacencyMatrix()
 
